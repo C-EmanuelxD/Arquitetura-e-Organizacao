@@ -35,7 +35,21 @@ def ehEndereco(palavra):
         return True
     else:
         return False
-    
+def ehInteiro(inteiro):
+    try:
+        if inteiro[:2] == '-|':
+            int(inteiro[2:].strip("|"))
+        elif inteiro[:1] == '|':
+            print("entrou aqui")
+            int(inteiro[1:].strip("|"))
+            print(inteiro)
+        else:
+            int(inteiro)
+
+        return True
+    except ValueError:
+        return False
+
     
 def leMem():
     global PC
@@ -63,19 +77,31 @@ def buscaOp():
 def decodificaOp():
     global MBR, MAR, IR
     
-    
     for carac in range(len(MBR[1])):
+        print(f"mbr puro: {MBR}")
+        print(f'mbr indice 1: {MBR[1]}')
         if MBR[1][carac] == '(':
             IR = MBR[0] +" "+ MBR[1][:carac]
-            MAR = MBR[1][carac:].strip("(").strip(")")
+            MAR = MBR[1][carac:].strip("(").strip(")").strip("|").strip(")")
         elif MBR[1] == "MQ":
             IR = MBR[0] + " " +MBR[1]
+
+        elif MBR[1][:3] == "MQ,":
+            parte = MBR[1].split(",")
+            if ehInteiro(parte[1]):
+                IR = MBR[0] + " " + parte[0] + "," + parte[1]
+                MAR = parte[1]
+
+        elif ehInteiro(MBR[1]):
+            IR = MBR[0] + " " + MBR[1]
     exibeRegistradores("Pós DecodificaOP")
     executaOp()
 
 def executaOp():
     global IR, MAR, MBR, AC, MQ, PC
+    print(f"primeiro ir {IR}")
     IR = IR.split(" ")
+    print(f"segundo ir {IR}")
     if IR[0] == "LOAD": #IF para os respectivos LOADS permitidos
         if IR[1] == "MQ": #Se apenas MQ no parametro o AC recebe MQ
             AC = MQ
@@ -95,7 +121,36 @@ def executaOp():
         elif IR[1] == "-|M":
             MBR = procuraEnd(MAR)[0]
             AC = -abs(int(MBR[0]))
-            
+        #enderecamento imediato se deixar la no fim depois dos split essas bomba nao funciona espero que o malbarbo enfie o python no cu dele
+        #fazer uma verificacao para nao entrar direto no indireto so colocar um and tipo ser diferente de -|M para entrar 
+        elif IR[1].isdigit():
+            AC = int(MBR[1])
+
+        elif IR[1][:1] == '-' and not IR[1][:2] == "-|":
+            AC = int(MBR[1])
+
+        elif IR[1][:1] == "|":
+            c = MBR[1].strip("|")
+            AC = abs(int(c))
+
+        elif IR[1][:2] == "-|":
+            c = MBR[1].strip("-").strip("|").strip("|")
+            AC = -abs(int(c))
+
+        elif IR[1].split(",")[1].isdigit():
+            MQ = int(MAR)
+
+        elif IR[1].split(",")[1][:1] == "-" and not IR[1].split(",")[1][:2] == "-|":
+            MQ = int(MAR)
+
+        elif IR[1].split(",")[1][:1] == "|":
+            c = MAR.strip("|")
+            MQ = abs(int(c))
+
+        elif IR[1].split(",")[1][:2] == "-|":
+            c = MAR.strip("-").strip("|").strip("|")
+            MQ = -abs(int(c))
+
         elif IR[1].split(",")[1] == "M": #abaixo e esse são os casos para parametros do tipo MQ,M(x), para o carregamento da memoria para o MQ
             MBR = procuraEnd(MAR)[0]
             MQ = int(MBR[0])
@@ -111,7 +166,8 @@ def executaOp():
         elif IR[1].split(",")[1] == "-|M":
             MBR = procuraEnd(MAR)[0]
             MQ = -abs(int(MBR[0]))
-            
+
+
     elif IR[0] == "STOR": #ARMAZENAMENTO DO DADO GUARDADO EM AC NO ESPAÇO DE MEMÓRIA ESPECIFICADO EM M(X)
         
         with open("RAM","r+") as ram: #Abertura do arquivo
@@ -133,24 +189,37 @@ def executaOp():
         
     elif IR[0] == "ADD": #ADIÇÃO DO AC PELO DADO PASSADO POR M(X)
         with open("RAM","r+") as ram:
-            MBR = procuraEnd(MAR)[0] #obtenção
-            AC = int(AC) + int(MBR[0])
+            if ehInteiro(IR[1]):
+                AC = int(AC) + int(IR[1])
+            else:
+                MBR = procuraEnd(MAR)[0] #obtenção
+                AC = int(AC) + int(MBR[0])
             
     elif IR[0] == "SUB": #Subtração do AC pelo dado passado por M(X)
         with open("RAM","r+") as ram:
-            MBR = procuraEnd(MAR)[0] #obtenção
-            AC = int(AC) - int(MBR[0])
+            if ehInteiro(IR[1]):
+                AC = int(AC) - int(IR[1])
+            else:
+                MBR = procuraEnd(MAR)[0] #obtenção
+                AC = int(AC) - int(MBR[0])
             
     elif IR[0] == "MUL": #multiplicação do MQ pelo dado passado por M(X)
         with open("RAM","r+") as ram:
-            MBR = procuraEnd(MAR)[0] #obtenção do dado e salvamento no MBR
-            MQ = int(MQ) * int(MBR[0])
+            if ehInteiro(IR[[1]]):
+                MQ = int(MQ) * int(IR[1])
+            else:
+                MBR = procuraEnd(MAR)[0] #obtenção do dado e salvamento no MBR
+                MQ = int(MQ) * int(MBR[0])
             
     elif IR[0] == "DIV": #Divisão do dado passado pela memória M(X)
          with open("RAM","r+") as ram:
-            MBR = procuraEnd(MAR)[0] #obtenção do dado e salvamento no MBR
-            AC = int(int(MQ) // int(MBR[0])) #guardando o quociente em AC
-            MQ = int(MQ) % int(MBR[0]) #guardando o resto em MQ
+            if ehInteiro(IR[1]):
+                AC = int(int(MQ) // int(IR[1])) #guardando o quociente em AC
+                MQ = int(MQ) % int(IR[1]) #guardando o resto em MQ
+            else:
+                MBR = procuraEnd(MAR)[0] #obtenção do dado e salvamento no MBR
+                AC = int(int(MQ) // int(MBR[0])) #guardando o quociente em AC
+                MQ = int(MQ) % int(MBR[0]) #guardando o resto em MQ
             
     elif IR[0] == "+JUMP":#Nas funções de JUMP apenas o PC é atribuido ao MAR (endereço passado pelo M(x))
         if int(AC) >= 0:
