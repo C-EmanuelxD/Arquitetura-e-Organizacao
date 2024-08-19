@@ -123,15 +123,15 @@ def executaOp():
         #fazer uma verificacao para nao entrar direto no indireto so colocar um and tipo ser diferente de -|M para entrar 
         elif IR[1].isdigit():
             AC = int(MBR[1])
-
-        elif IR[1][:1] == '-' and not IR[1][:2] == "-|" and not IR[1][3] == "M":
+        
+        elif IR[1][:1] == '-' and not IR[1][:2] == "-|" and not IR[1][2] == "M":
             AC = int(MBR[1])
 
         elif IR[1][:1] == "|" and not IR[1][2] == "M":
             c = MBR[1].strip("|")
             AC = abs(int(c))
 
-        elif IR[1][:2] == "-|" and not IR[1][3] == "M":
+        elif IR[1][:2] == "-|" and not IR[1][2] == "M":
             c = MBR[1].strip("-").strip("|").strip("|")
             AC = -abs(int(c))
 
@@ -273,7 +273,7 @@ def executaOp():
                 ram.seek(offset)
                 memsobra = TAM_MEM - len(aux[1])
                 if memsobra < 0:
-                    print("O VALOR EXCEDEU O TAMANHO DISPONÍVEL. FECHANDO!")
+                    print("o valor excedeu o tamanho disponivel")
                     exit(OverflowError)
                 else:
                     aux = aux[0] + " " + (str(0) * (memsobra)) + aux[1]
