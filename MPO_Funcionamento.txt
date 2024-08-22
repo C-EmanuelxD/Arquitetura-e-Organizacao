@@ -1,0 +1,17 @@
+Ponteiro MPO - Memory Pointer
+
+- Funciona como um ponteiro de arquivos. (offsets)
+
+Funções:
+LOAD MPO,M(X) -> carrega em MPO o endereço (em sí) de memória.
+ADD MPO,x -> Incrementa em x o endereço apontado por MPO.
+ADD MPO -> Incrementa em 1 o endereço apontado por MPO.
+SUB MPO,x -> Subtrai em x o endereço apontado por MPO.
+SUB MPO -> Subtrai em 1 o endereço apontado por MPO.
+
+Uso in codigo:
+LOAD M(MPO) -> carrega o conteúdo do endereço apontado por MPO para o AC.
+LOAD MQ,M(MPO) -> carrega o conteúdo do endereço apontado por MPO para o MQ.
+STOR M(MPO) -> Armazena o valor do acumulador no conteúdo do endereço apontado por MPO.
+STOR MPO,M(X) -> Guarda o endereço de memória em sí, apontado por MPO, no endereço X específicado.
+Obs.: se der LOAD em um endereço de memória que contém um outro endereço, este será carregado para o MPO.
