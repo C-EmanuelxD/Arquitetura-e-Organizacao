@@ -85,7 +85,6 @@ def decodificaOp():
             parte = MBR[1].split(",")
             if ehInteiro(parte[1]):
                 IR = MBR[0] + " " + parte[0] + "," + parte[1]
-                MAR = parte[1]
 
         elif ehInteiro(MBR[1]):
             IR = MBR[0] + " " + MBR[1]
