@@ -88,7 +88,7 @@ def leMem():
     global ramList, PC
     with open("RAM", "r+") as ram:
         ramList = ram.readlines()
-    PC = '0x14'
+    PC = sys.argv[1]
     buscaOp(ramList)
         
         
