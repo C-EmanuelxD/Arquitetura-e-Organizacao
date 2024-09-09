@@ -4,6 +4,7 @@ MBR = 0
 MQ = 0
 AC = 0
 C = 0
+Z = 0
 #Iniciando as variávies da UC
 PC = 0
 IR = 0
@@ -243,6 +244,12 @@ def executaOp():
                     AC = AC - 10000
                 else:
                     C = 0
+            if AC < 0:
+                Z = -1
+            elif AC > 0:
+                Z = 1
+            elif AC == 0:
+                Z  = -
             print("ADD")
             print(IR, MAR, MBR, AC, MQ, PC, MPO)
     elif IR[0] == "SUB": #Subtração do AC pelo dado passado por M(X)
