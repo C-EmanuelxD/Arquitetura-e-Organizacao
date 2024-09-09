@@ -88,7 +88,7 @@ def leMem():
     global ramList, PC
     with open("RAM", "r+") as ram:
         ramList = ram.readlines()
-    PC = sys.argv[1]
+    PC = "0x14"
     buscaOp(ramList)
         
         
@@ -139,9 +139,6 @@ def decodificaOp():
 
 def executaOp():
     global IR, MAR, MBR, AC, MQ, PC, MPO
-    print(f"primeiro ir {IR}")
-    #IR = IR.split(" ")
-    print(f"segundo ir {IR}")
     if IR[0] == "LOAD": #IF para os respectivos LOADS permitidos
         if IR[1] == "MQ": #Se apenas MQ no parametro o AC recebe MQ
             AC = MQ
@@ -214,7 +211,8 @@ def executaOp():
         elif IR[1].split(",")[1] == "-|M":
             MBR = procuraEnd(MAR)[0]
             MQ = -abs(int(MBR[0]))
-
+            print("LOAD")
+            print(IR, MAR, MBR, AC, MQ, PC, MPO)
     elif IR[0] == "STOR": #ARMAZENAMENTO DO DADO GUARDADO EM AC NO ESPAÇO DE MEMÓRIA ESPECIFICADO EM M(X)
         if IR[1] == "MPO,M":
             #Guardar no MAR o que esta contido em MPO
@@ -222,7 +220,8 @@ def executaOp():
         else:
             MBR = AC
             guardaEnd(MAR, MBR)
-        
+        print("STOR")
+        print(IR, MAR, MBR, AC, MQ, PC, MPO)
     elif IR[0] == "ADD": #ADIÇÃO DO AC PELO DADO PASSADO POR M(X)
         
         if IR[1] == "MPO":
@@ -244,7 +243,8 @@ def executaOp():
                     AC = AC - 10000
                 else:
                     C = 0
-            
+            print("ADD")
+            print(IR, MAR, MBR, AC, MQ, PC, MPO)
     elif IR[0] == "SUB": #Subtração do AC pelo dado passado por M(X)
         
         if IR[1] == "MPO":
@@ -266,7 +266,8 @@ def executaOp():
                     AC = AC + 10000
                 else:
                     C = 0
-            
+            print("SUB")
+            print(IR, MAR, MBR, AC, MQ, PC, MPO)
     elif IR[0] == "MUL": #multiplicação do MQ pelo dado passado por M(X)
         
         if ehInteiro(IR[1]):
@@ -299,13 +300,14 @@ def executaOp():
 
 
     elif IR[0] == "+JUMP":#Nas funções de JUMP apenas o PC é atribuido ao MAR (endereço passado pelo M(x))
-        if int(AC) >= 0:
+        if int(AC) > 0:
             PC = MAR
     elif IR[0] == "-JUMP":
         if int(AC) <= 0:
             PC = MAR
     elif IR[0] == "JUMP":
             PC = MAR 
+
     #exibeRegistradores("Fim da Execução")
             
       
