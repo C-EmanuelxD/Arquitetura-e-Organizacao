@@ -249,7 +249,7 @@ def executaOp():
             elif AC > 0:
                 Z = 1
             elif AC == 0:
-                Z  = -
+                Z  = 0
             print("ADD")
             print(IR, MAR, MBR, AC, MQ, PC, MPO)
     elif IR[0] == "SUB": #Subtração do AC pelo dado passado por M(X)
@@ -273,6 +273,12 @@ def executaOp():
                     AC = AC + 10000
                 else:
                     C = 0
+            if AC < 0:
+                Z = -1
+            elif AC > 0:
+                Z = 1
+            elif AC == 0:
+                Z  = 0
             print("SUB")
             print(IR, MAR, MBR, AC, MQ, PC, MPO)
     elif IR[0] == "MUL": #multiplicação do MQ pelo dado passado por M(X)
